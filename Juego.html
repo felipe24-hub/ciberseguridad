@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adivina la Amenaza</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://media.giphy.com/media/smzfl3E7a4iHK/giphy.gif?cid=790b7611nb5pu3ay262iju7f3tfahmq9o68k4rodhww5stao&ep=v1_gifs_search&rid=giphy.gif&ct=g');
+            background-size: cover;
+            color: #00ff00;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        #game-container {
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            margin: auto;
+            width: 50%;
+        }
+        input {
+            padding: 10px;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #00ff00;
+            color: #1a1a1a;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #005500;
+        }
+        footer {
+            margin-top: 20px;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Adivina la Amenaza</h1>
+        <div id="clue-container"></div>
+        <input type="text" id="user-input" placeholder="Tu respuesta...">
+        <button id="submit-button">Adivinar</button>
+        <div id="message"></div>
+        <button id="next-button" style="display:none;">Siguiente Amenaza</button>
+        <button id="home-button" onclick="window.location.href='file:///C:/Users/felipe/Desktop/Producto%20monografia/2.html'">Ir al Inicio</button>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Piña records.</p>
+        <p>Version 1.1</p>
+    </footer>
+
+    <script>
+        const threats = [
+        {
+        clue: "Este tipo de ataque solicita un rescate a cambio de devolver el acceso a los datos.",
+        hint: "Pista: Su nombre sugiere un rescate monetario.",
+        answer: "ransomware"
+    },
+    {
+        clue: "Este programa parece útil, pero en realidad está diseñado para dañar o robar datos.",
+        hint: "Pista: Se llama así por un antiguo guerrero griego.",
+        answer: "troyano"
+    },
+    {
+        clue: "Este ataque busca engañar a los usuarios para que revelen información sensible a través de mensajes falsos.",
+        hint: "Pista: A menudo se presenta como una comunicación de una entidad legítima.",
+        answer: "phishing"
+    },
+    {
+        clue: "Este tipo de ataque implica múltiples dispositivos que sobrecargan un servidor para hacerlo inaccesible.",
+        hint: "Pista: Su nombre incluye una abreviatura de 'denegación de servicio'.",
+        answer: "ataque DDoS"
+    },
+    {
+        clue: "Este tipo de malware se replica a sí mismo y se propaga a otros sistemas.",
+        hint: "Pista: A menudo se presenta como un programa inofensivo.",
+        answer: "virus"
+    },
+    {
+        clue: "Este tipo de software roba información confidencial como contraseñas y números de tarjeta de crédito.",
+        hint: "Pista: Su nombre implica 'registrar' información.",
+        answer: "keylogger"
+    },
+    {
+        clue: "Este tipo de ataque se basa en manipular a personas para que divulguen información sensible.",
+        hint: "Pista: Se refiere a técnicas de engaño psicológico.",
+        answer: "ingeniería social"
+    },
+    {
+        clue: "Este software malicioso bloquea el acceso a los datos hasta que se pague un rescate.",
+        hint: "Pista: Similar al ransomware, pero más específico.",
+        answer: "cryptolocker"
+    },
+    {
+        clue: "Este ataque busca interceptar y manipular comunicaciones entre dos partes sin que lo sepan.",
+        hint: "Pista: Su nombre implica 'intermediario'.",
+        answer: "ataque Man-in-the-Middle"
+    },
+    {
+        clue: "Un tipo de software que puede dañar o deshabilitar dispositivos y redes.",
+        hint: "Pista: Es conocido por causar estragos en la informática.",
+        answer: "malware"
+    },
+    {
+        clue: "Este ataque se realiza al explotar vulnerabilidades en software no actualizado.",
+        hint: "Pista: A menudo, este tipo de ataque se lleva a cabo en aplicaciones web.",
+        answer: "explotación de vulnerabilidades"
+    },
+    {
+        clue: "Este método implica suplantar a una fuente confiable para obtener información.",
+        hint: "Pista: A menudo se utiliza en ataques de phishing.",
+        answer: "suplantación de identidad"
+    },
+    {
+        clue: "Este ataque está diseñado para robar datos sensibles utilizando redes Wi-Fi públicas.",
+        hint: "Pista: Su nombre incluye 'intercepción'.",
+        answer: "sniffing"
+    },
+    {
+        clue: "Este tipo de software se instala sin el conocimiento del usuario y a menudo muestra anuncios no deseados.",
+        hint: "Pista: Se refiere a anuncios que aparecen en lugares inesperados.",
+        answer: "adware"
+    },
+    {
+        clue: "Un tipo de malware que toma control de un dispositivo y lo utiliza para realizar ataques.",
+        hint: "Pista: Su nombre sugiere que 'se esconde' en el dispositivo.",
+        answer: "botnet"
+    },
+    {
+        clue: "Este tipo de ataque utiliza ingenieros para infiltrarse en sistemas mediante tácticas engañosas.",
+        hint: "Pista: Se basa en el comportamiento humano, no en la tecnología.",
+        answer: "ataque de ingeniería social"
+    },
+    {
+    clue: "Este software espía se instala sin el consentimiento del usuario y recopila información de manera secreta.",
+    hint: "Pista: Su nombre sugiere que 'espía'.",
+    answer: "spyware"
+},
+{
+    clue: "Este tipo de malware se presenta como una herramienta legítima, pero oculta intenciones dañinas.",
+    hint: "Pista: Su nombre se relaciona con un antiguo artefacto.",
+    answer: "rogue software"
+},
+{
+    clue: "Este ataque se realiza a través de correos electrónicos que contienen enlaces o archivos maliciosos.",
+    hint: "Pista: Su nombre se relaciona con el término 'spam'.",
+    answer: "malware de correo electrónico"
+},
+{
+    clue: "Este tipo de ataque se dirige a dispositivos móviles y a menudo se propaga a través de aplicaciones.",
+    hint: "Pista: Es una forma de malware móvil.",
+    answer: "malware móvil"
+},
+{
+    clue: "Un ataque que utiliza redes de computadoras para realizar ataques simultáneos a múltiples objetivos.",
+    hint: "Pista: Este tipo de ataque tiene una abreviatura que implica 'servicio distribuido'.",
+    answer: "DDoS"
+},
+{
+    clue: "Este software se infiltra en un sistema y modifica la configuración para que un atacante tenga control.",
+    hint: "Pista: A menudo se llama un 'puente' hacia otros ataques.",
+    answer: "backdoor"
+},
+{
+    clue: "Este ataque implica cambiar la dirección de los datos en una comunicación para redirigir a la víctima.",
+    hint: "Pista: Su nombre implica 'redirección'.",
+    answer: "DNS spoofing"
+},
+{
+    clue: "Un tipo de malware que se presenta como un programa antivirus legítimo, pero que en realidad causa daño.",
+    hint: "Pista: Su nombre implica una especie de fraude.",
+    answer: "scareware"
+}
+        ];
+
+        // Mezclar las adivinanzas
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        let currentThreatIndex = 0;
+
+        function startGame() {
+            shuffleArray(threats);
+            displayClue();
+        }
+
+        function displayClue() {
+            const threat = threats[currentThreatIndex];
+            document.getElementById('clue-container').innerText = threat.clue;
+            document.getElementById('message').innerText = '';
+            document.getElementById('next-button').style.display = 'none';
+            document.getElementById('user-input').value = '';
+        }
+
+        document.getElementById('submit-button').onclick = function() {
+            const userInput = document.getElementById('user-input').value.toLowerCase();
+            const currentAnswer = threats[currentThreatIndex].answer.toLowerCase();
+
+            if (userInput === currentAnswer) {
+                document.getElementById('message').innerText = '¡Correcto! Has adivinado la amenaza.';
+                document.getElementById('next-button').style.display = 'block';
+            } else {
+                document.getElementById('message').innerText = 'Incorrecto. Inténtalo de nuevo. ' + threats[currentThreatIndex].hint;
+            }
+        };
+
+        document.getElementById('next-button').onclick = function() {
+            currentThreatIndex++;
+            if (currentThreatIndex < threats.length) {
+                displayClue();
+            } else {
+                document.getElementById('game-container').innerHTML = "<h2>¡Felicidades! Has adivinado todas las amenazas.</h2>";
+            }
+        };
+
+        startGame();
+    </script>
+</body>
+</html>

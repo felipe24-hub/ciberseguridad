@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Ciberseguridad</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: url('https://cdn-gx-aria-media.osp.opera.software/images/40b62734-86aa-11ef-b5bb-39765ead5e7a/1728525581619/sample_0.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #00ff00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,255,0,0.5);
+            width: 300px;
+            text-align: center;
+            border: 1px solid #00ff00;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #00ff00;
+            color: #0d0d0d;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #00cc00;
+        }
+
+        button {
+            background-color: #00ff00;
+            color: #0d0d0d;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #00cc00;
+        }
+
+        h1, h2 {
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        #options button {
+            display: block;
+            margin: 10px auto;
+            width: 90%;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .incorrect-questions-container {
+            max-height: 150px; 
+            overflow-y: auto;  
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='file:///C:/Users/felipe/Desktop/Producto%20monografia/2.html'">Volver al Inicio</button>
+    <div class="container">
+        <h1>¿Cuánto sabes sobre Ciberseguridad?</h1>
+        <div id="quiz-container">
+            <div id="question"></div>
+            <div id="options"></div>
+            <button id="next-button" style="display: none;"></button>
+        </div>
+        <div id="result" style="display: none;">
+            <h2>Resultado</h2>
+            <p id="score"></p>
+            <h3>Preguntas Respondidas Incorrectamente:</h3>
+            <div class="incorrect-questions-container">
+                <ul id="incorrect-questions"></ul>
+            </div>
+            <button id="restart-button" onclick="startQuiz()">Reiniciar Quiz</button>
+            <button id="exit-button" onclick="window.location.href='file:///C:/Users/felipe/Desktop/Producto%20monografia/2.html'">Volver al Inicio</button>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Piña records.</p>
+        <p>Version 1.1</p>
+    </footer>
+
+    <script>
+        const questions = [
+            { question: "¿Qué es un phishing?", options: ["Un tipo de pescado", "Un ataque cibernético", "Un software antivirus"], answer: 1 },
+            { question: "¿Cuál es una buena práctica de seguridad?", options: ["Usar la misma contraseña para todo", "Activar la autenticación de dos factores", "Compartir contraseñas"], answer: 1 },
+            { question: "¿Qué significa el término 'malware'?", options: ["Software malicioso", "Software útil", "Software de entretenimiento"], answer: 0 },
+            { question: "¿Qué es un firewall?", options: ["Una pared de fuego", "Un sistema de protección de red", "Un tipo de software malicioso"], answer: 1 },
+            { question: "¿Qué es un virus informático?", options: ["Un programa que se replica", "Un archivo inofensivo", "Una herramienta de software"], answer: 0 },
+            { question: "¿Qué es la autenticación de dos factores?", options: ["Una contraseña doble", "Un método de verificación adicional", "Un software de seguridad"], answer: 1 },
+            { question: "¿Qué es un ataque DDoS?", options: ["Una técnica de hacking", "Un ataque que inunda un servidor con tráfico", "Un tipo de malware"], answer: 1 },
+            { question: "¿Qué debes hacer si recibes un correo sospechoso?", options: ["Abrirlo con cuidado", "Ignorarlo", "Marcarlo como spam"], answer: 2 },
+            { question: "¿Qué es el ransomware?", options: ["Un tipo de virus que roba datos", "Un software que secuestra archivos", "Una herramienta de seguridad"], answer: 1 },
+            { question: "¿Qué es un certificado SSL?", options: ["Un tipo de malware", "Una capa de seguridad en la web", "Un software de antivirus"], answer: 1 },
+            { question: "¿Cómo puedes proteger tu red Wi-Fi?", options: ["Usando una contraseña fuerte", "Dejándola abierta", "Usando el mismo nombre para todos"], answer: 0 },
+            { question: "¿Qué es el espionaje cibernético?", options: ["Robar información a través de redes", "Un ataque físico", "Un tipo de software"], answer: 0 },
+            { question: "¿Qué es el social engineering?", options: ["Manipulación psicológica para obtener información", "Un tipo de virus", "Un software de protección"], answer: 0 },
+            { question: "¿Qué es un botnet?", options: ["Una red de dispositivos infectados", "Un tipo de software antivirus", "Un servidor seguro"], answer: 0 },
+            { question: "¿Qué significa HTTPS?", options: ["Protocolo seguro de transferencia de hipertexto", "Un tipo de malware", "Un sistema de antivirus"], answer: 0 },
+            { question: "¿Qué debes hacer al usar una red pública?", options: ["Usar una VPN", "No hacer nada", "Conectarte sin preocupación"], answer: 0 },
+            { question: "¿Qué es un exploit?", options: ["Un tipo de malware", "Una vulnerabilidad utilizada para atacar", "Un software de protección"], answer: 1 },
+            { question: "¿Cuál es el propósito de un antivirus?", options: ["Eliminar software malicioso", "Acelerar el ordenador", "Proteger solo redes"], answer: 0 },
+            { question: "¿Qué es un hacker ético?", options: ["Una persona que hackea para hacer daño", "Un experto en ciberseguridad que prueba sistemas", "Un tipo de malware"], answer: 1 },
+            { question: "¿Qué significa 'actualizar software'?", options: ["Cambiar contraseñas", "Instalar las últimas versiones para seguridad", "Borrar archivos"], answer: 1 },
+            { question: "¿Qué es el phishing por SMS?", options: ["Un ataque por correo", "Un ataque a través de mensajes de texto", "Un tipo de malware"], answer: 1 },
+            { question: "¿Qué es el cryptojacking?", options: ["Uso no autorizado de recursos informáticos para minar criptomonedas", "Un tipo de malware", "Un ataque de phishing"], answer: 0 },
+            { question: "¿Qué es el software espía?", options: ["Software que protege contra virus", "Software que roba información personal", "Un tipo de firewall"], answer: 1 },
+            { question: "¿Qué debes hacer si pierdes tu dispositivo?", options: ["Ignorarlo", "Informar a tu proveedor de servicios y cambiar contraseñas", "Dejarlo así"], answer: 1 },
+            { question: "¿Qué es un ataque de fuerza bruta?", options: ["Un ataque que utiliza múltiples dispositivos", "Un ataque que prueba todas las combinaciones de contraseña posibles", "Un tipo de phishing"], answer: 1 },
+            { question: "¿Qué es un servidor proxy?", options: ["Un tipo de malware", "Un servidor que actúa como intermediario", "Una herramienta de hacking"], answer: 1 },
+            { question: "¿Qué es un ataque MITM (Man in the Middle)?", options: ["Un tipo de phishing", "Intercepción de comunicación entre dos partes", "Un ataque de fuerza bruta"], answer: 1 },
+            { question: "¿Cuál es la función principal de un VPN?", options: ["Proteger contra malware", "Encriptar la conexión a internet", "Acelerar la conexión a internet"], answer: 1 },
+            { question: "¿Qué es la ingeniería social?", options: ["Manipulación psicológica para obtener información", "Un tipo de software malicioso", "Una técnica de hacking"], answer: 0 },
+            { question: "¿Qué significa el término 'zero-day'?", options: ["Un tipo de ataque", "Una vulnerabilidad desconocida por el fabricante", "Un software de seguridad"], answer: 1 },
+            { question: "¿Cuál es el propósito de la autenticación multifactor?", options: ["Hacer más fácil el acceso", "Añadir una capa adicional de seguridad", "Acelerar el proceso de inicio de sesión"], answer: 1 },
+            { question: "¿Qué es el phishing inverso?", options: ["Una técnica de suplantación de identidad", "Cuando el atacante se presenta como víctima", "Un ataque a través de redes sociales"], answer: 1 },
+            { question: "¿Cuál es la función de un antivirus?", options: ["Proteger únicamente de virus", "Detectar y eliminar software malicioso", "Optimizar el rendimiento del sistema"], answer: 1 },
+            { question: "¿Qué es un troyano?", options: ["Un software que se oculta como uno legítimo", "Un virus informático", "Un tipo de firewall"], answer: 0 },
+            { question: "¿Qué es la encriptación?", options: ["El proceso de codificar información", "Un tipo de ataque", "Una técnica de hacking"], answer: 0 },
+            { question: "¿Qué es el ataque de 'ransomware'?", options: ["Un virus que roba datos", "Un tipo de malware que bloquea archivos hasta que se pague un rescate", "Un método de espionaje"], answer: 1 },
+            { question: "¿Qué es un 'keylogger'?", options: ["Un tipo de software que registra teclas presionadas", "Una herramienta de protección", "Un tipo de malware"], answer: 0 },
+            { question: "¿Qué deberías hacer si tu cuenta en línea es hackeada?", options: ["Cambiar inmediatamente la contraseña", "Ignorarlo", "Informar a tus amigos"], answer: 0 },
+            { question: "¿Qué es un ataque de inyección SQL?", options: ["Un ataque a bases de datos", "Un tipo de malware", "Un software de seguridad"], answer: 0 },
+            { question: "¿Qué es un 'honeypot'?", options: ["Un sistema diseñado para atraer atacantes", "Un tipo de malware", "Una técnica de hacking"], answer: 0 },
+            { question: "¿Qué es un 'worm'?", options: ["Un tipo de virus que se reproduce automáticamente", "Un software de seguridad", "Un tipo de troyano"], answer: 0 },
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let incorrectQuestions = [];
+
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const nextButton = document.getElementById('next-button');
+        const resultElement = document.getElementById('result');
+        const scoreElement = document.getElementById('score');
+        const incorrectQuestionsElement = document.getElementById('incorrect-questions');
+
+        function startQuiz() {
+            score = 0;
+            currentQuestionIndex = 0;
+            incorrectQuestions = [];
+            nextButton.style.display = 'none';
+            resultElement.style.display = 'none';
+            questionElement.style.display = 'block';
+            optionsElement.style.display = 'block';
+            incorrectQuestionsElement.innerHTML = '';
+            shuffleArray(questions);
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.innerText = currentQuestion.question;
+            optionsElement.innerHTML = '';
+
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.onclick = () => selectOption(index);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function selectOption(selectedIndex) {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selectedIndex === currentQuestion.answer) {
+                score++;
+            } else {
+                incorrectQuestions.push(currentQuestion.question);
+            }
+            currentQuestionIndex++;
+            nextButton.style.display = 'block';
+
+            if (currentQuestionIndex >= questions.length) {
+                showResult();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResult() {
+            questionElement.style.display = 'none';
+            optionsElement.style.display = 'none';
+            nextButton.style.display = 'none';
+            resultElement.style.display = 'block';
+            scoreElement.innerText = `Tu puntaje es ${score} de ${questions.length}.`;
+
+            
+            incorrectQuestions.forEach((question) => {
+                const li = document.createElement('li');
+                li.innerText = question;
+                incorrectQuestionsElement.appendChild(li);
+            });
+        }
+
+        startQuiz();
+    </script>
+</body>
+</html>

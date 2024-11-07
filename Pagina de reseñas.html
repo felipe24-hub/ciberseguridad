@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseñas Hacker</title>
+    <style>
+        body {
+            background-image: url('https://cdn-gx-aria-media.osp.opera.software/images/d96257da-8b5b-11ef-b12e-e9ed02a724f6/1729041213023/sample_0.jpg'); 
+            background-size: cover; 
+            background-position: center;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: rgba(34, 34, 34, 0.8); 
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .intro-section {
+            background-color: #222;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 40px;
+        }
+
+        .form-section, .reviews-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            background-color: #222;
+        }
+
+        textarea {
+            width: 80%; 
+            height: 70px; 
+            background-color: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            resize: none; 
+            margin: 0 auto; 
+            display: block; 
+        }
+
+        button {
+            background-color: #00ff00;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        button:hover {
+            background-color: #00cc00;
+        }
+
+        .review-box {
+            background-color: #333;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #ffffff;
+        }
+
+        .home-button {
+            background-color: #00ff00;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+            width: 50%; 
+        }
+
+     
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="intro-section">
+            <h2>Bienvenido</h2>
+            <p>Esta sección está diseñada para que ustedes, los usuarios, me puedan dar recomendaciones para mejorar la página.</p>
+        </div>
+
+        <h1>Reseñas</h1>
+
+        <div class="form-section">
+            <h2>Enviar Reseña</h2>
+            <form id="reviewForm">
+                <textarea id="reviewInput" placeholder="Escribe tu reseña aquí..." required></textarea>
+                <button type="submit">Enviar Reseña</button>
+            </form>
+        </div>
+
+        <div class="reviews-section">
+            <h2>Reseñas:</h2>
+            <ul id="reviewList"></ul>
+        </div>
+    </div>
+    
+    <div class="footer">
+         <button class="home-button" onclick="window.location.href='file:///C:/Users/felipe/Desktop/Producto%20monografia/2.html'">Ir al inicio</button>
+         <p>&copy; 2024 Piña records</p>
+         <p>Version 1.1</p>
+    </div>
+
+    <script>
+        
+        function loadReviews() {
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            const reviewList = document.getElementById('reviewList');
+            reviewList.innerHTML = ''; 
+            reviews.forEach(review => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('review-box');
+                listItem.textContent = review;
+                reviewList.appendChild(listItem);
+            });
+        }
+
+      
+        function saveReview(review) {
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            reviews.push(review);
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+        }
+
+      
+        function deleteReviews() {
+            localStorage.removeItem('reviews'); 
+            loadReviews(); 
+        }
+
+        document.getElementById('reviewForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const reviewInput = document.getElementById('reviewInput');
+            const reviewText = reviewInput.value;
+
+           
+            saveReview(reviewText);
+
+            
+            const reviewList = document.getElementById('reviewList');
+            const listItem = document.createElement('li');
+            listItem.classList.add('review-box');
+            listItem.textContent = reviewText;
+            reviewList.appendChild(listItem);
+
+            reviewInput.value = ''; 
+        });
+
+        document.getElementById('deleteButton').addEventListener('click', deleteReviews); 
+
+        
+        loadReviews();
+    </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Situaciones de ciberseguridad en la vida real</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://media.giphy.com/media/smzfl3E7a4iHK/giphy.gif?cid=790b7611nb5pu3ay262iju7f3tfahmq9o68k4rodhww5stao&ep=v1_gifs_search&rid=giphy.gif&ct=g');
+            background-size: cover;
+            background-position: center;
+            color: #00ff00;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        #game-container {
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            margin: auto;
+            width: 50%;
+        }
+        button {
+            background-color: #00ff00;
+            color: #1a1a1a;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 10px 0;
+            display: block;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        button:hover {
+            background-color: #005500;
+        }
+        .avatar {
+            width: 60px;
+            height: 60px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #final-avatar {
+            width: 30px;
+            height: 30px;
+            margin: 10px 0;
+        }
+        #score {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+        .option {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Situaciones de ciberseguridad en la vida real</h1>
+
+        <div id="avatar-selection" style="display: none;">
+            <h2>Elige tu Avatar</h2>
+            <img src="https://cdn-gx-aria-media.osp.opera.software/images/324cca5f-8844-11ef-a2cd-6fffad429b6e/1728701250321/sample_0.jpg" class="avatar" onclick="selectAvatar('Avatar A')">
+            <img src="https://cdn-gx-aria-media.osp.opera.software/images/53cc4e42-8845-11ef-8dc3-49926e9cde70/1728701685485/sample_0.jpg" class="avatar" onclick="selectAvatar('Avatar B')">
+            <img src="https://cdn-gx-aria-media.osp.opera.software/images/e129db44-8844-11ef-82bb-4bbe986c9a65/1728701553900/sample_0.jpg" class="avatar" onclick="selectAvatar('Avatar C')">
+        </div>
+
+        <div id="situation" style="display: none;"></div>
+        <div id="options" style="display: none;"></div>
+        <div id="score" style="display: none;">Puntuación: 0</div>
+        
+        <button id="next-button" style="display:none;">Siguiente Situación</button>
+        <button id="restart-button" onclick="goToStart()">Ir al Inicio</button>
+    </div>
+
+    <script>
+        const avatars = {
+            "Avatar A": "https://cdn-gx-aria-media.osp.opera.software/images/324cca5f-8844-11ef-a2cd-6fffad429b6e/1728701250321/sample_0.jpg",
+            "Avatar B": "https://cdn-gx-aria-media.osp.opera.software/images/53cc4e42-8845-11ef-8dc3-49926e9cde70/1728701685485/sample_0.jpg",
+            "Avatar C": "https://cdn-gx-aria-media.osp.opera.software/images/e129db44-8844-11ef-82bb-4bbe986c9a65/1728701553900/sample_0.jpg"
+        };
+
+        const situations = [
+        {
+        text: "Recibes un correo electrónico de un banco que no reconoces.",
+        options: [
+            { text: "Ignorar el correo.", points: 1 },
+            { text: "Hacer clic en el enlace.", points: -1 },
+            { text: "Llamar al banco para verificar.", points: 2 }
+        ]
+    },
+    {
+        text: "Te conectas a una red Wi-Fi pública.",
+        options: [
+            { text: "Conectarte sin pensarlo.", points: -1 },
+            { text: "Usar una VPN antes de conectarte.", points: 1 },
+            { text: "Preguntar al barista por la contraseña.", points: 0 }
+        ]
+    },
+    {
+        text: "Encuentras un USB perdido en un lugar público.",
+        options: [
+            { text: "Conectarlo a tu computadora.", points: -2 },
+            { text: "Entregarlo al personal.", points: 2 },
+            { text: "Ignorarlo.", points: 0 }
+        ]
+    },
+    {
+        text: "Recibes un mensaje de texto pidiendo tu información personal.",
+        options: [
+            { text: "Responder pidiendo más información.", points: -1 },
+            { text: "Ignorar el mensaje.", points: 1 },
+            { text: "Compartir la información porque no tienes nada que ocultar.", points: -2 }
+        ]
+    },
+    {
+        text: "Ves una oferta increíble en un sitio web desconocido.",
+        options: [
+            { text: "Hacer clic y comprar.", points: -2 },
+            { text: "Buscar reseñas sobre el sitio primero.", points: 2 },
+            { text: "Ignorar la oferta.", points: 1 }
+        ]
+    },
+    {
+        text: "Recibes una llamada de alguien que dice ser de soporte técnico.",
+        options: [
+            { text: "Proporcionarles acceso remoto.", points: -2 },
+            { text: "Colgar y buscar el número oficial.", points: 2 },
+            { text: "Escuchar lo que tienen que decir.", points: 0 }
+        ]
+    },
+    {
+        text: "Te piden que instales una actualización de software de un enlace sospechoso.",
+        options: [
+            { text: "Instalar la actualización.", points: -2 },
+            { text: "Visitar el sitio oficial del software.", points: 2 },
+            { text: "Ignorar la actualización.", points: 1 }
+        ]
+    },
+    {
+        text: "Un amigo te envía un enlace a un video que parece extraño.",
+        options: [
+            { text: "Hacer clic en el enlace.", points: -1 },
+            { text: "Preguntarles si el enlace es seguro.", points: 1 },
+            { text: "Ignorar el enlace.", points: 2 }
+        ]
+    },
+    {
+        text: "Ves que tu computadora funciona lentamente y aparecen anuncios extraños.",
+        options: [
+            { text: "Reiniciar la computadora.", points: 0 },
+            { text: "Ejecutar un escaneo de malware.", points: 2 },
+            { text: "Ignorar los anuncios.", points: -1 }
+        ]
+    },
+    {
+        text: "Alguien te ofrece ayuda en redes sociales para arreglar un problema técnico.",
+        options: [
+            { text: "Aceptar la ayuda inmediatamente.", points: -1 },
+            { text: "Verificar su perfil y referencias.", points: 2 },
+            { text: "Ignorar la oferta de ayuda.", points: 1 }
+        ]
+    },
+
+    {
+        text: "Alguien en un foro ofrece un programa gratis que promete acelerar tu computadora.",
+        options: [
+            { text: "Descargar el programa.", points: -2 },
+            { text: "Investigar el programa y sus reseñas.", points: 2 },
+            { text: "Ignorar la oferta.", points: 1 }
+        ]
+    },
+    {
+        text: "Te encuentras con un sitio web que pide información personal para acceder a contenido exclusivo.",
+        options: [
+            { text: "Proporcionar la información.", points: -2 },
+            { text: "Buscar si el sitio es confiable.", points: 2 },
+            { text: "Salir del sitio.", points: 1 }
+        ]
+    },
+    {
+        text: "Un mensaje de phishing aparece en tu bandeja de entrada con una advertencia urgente sobre tu cuenta.",
+        options: [
+            { text: "Hacer clic en el enlace para verificar.", points: -2 },
+            { text: "Reportar el mensaje y eliminarlo.", points: 2 },
+            { text: "Leer el mensaje con atención antes de actuar.", points: 0 }
+        ]
+    },
+    {
+        text: "Un sitio web te pide que descargues un complemento para mejorar tu experiencia de navegación.",
+        options: [
+            { text: "Descargar el complemento.", points: -2 },
+            { text: "Revisar las opiniones sobre el complemento.", points: 2 },
+            { text: "No descargar nada.", points: 1 }
+        ]
+    }
+        ];
+
+        let currentSituationIndex = 0;
+        let score = 0;
+        let selectedAvatar = '';
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startGame() {
+            shuffle(situations); 
+            document.getElementById('avatar-selection').style.display = 'block';
+            document.getElementById('restart-button').style.display = 'block';
+        }
+
+        function selectAvatar(avatar) {
+            selectedAvatar = avatar;
+            document.getElementById('avatar-selection').style.display = 'none';
+            document.getElementById('situation').style.display = 'block';
+            document.getElementById('options').style.display = 'block';
+            document.getElementById('score').style.display = 'block';
+            displaySituation();
+        }
+
+        function displaySituation() {
+            const situation = situations[currentSituationIndex];
+            document.getElementById('situation').innerText = situation.text;
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            situation.options.forEach((option) => {
+                const button = document.createElement('button');
+                button.innerText = option.text;
+                button.classList.add('option');
+                button.onclick = () => selectOption(option.points);
+                optionsContainer.appendChild(button);
+            });
+
+            document.getElementById('next-button').style.display = 'none';
+        }
+
+        function selectOption(points) {
+            score += points;
+            document.getElementById('score').innerText = `Puntuación: ${score}`;
+            document.getElementById('next-button').style.display = 'block';
+
+            const options = document.querySelectorAll('#options button');
+            options.forEach(button => button.disabled = true);
+        }
+
+        document.getElementById('next-button').onclick = function() {
+            currentSituationIndex++;
+            if (currentSituationIndex < situations.length) {
+                displaySituation();
+            } else {
+                document.getElementById('game-container').innerHTML = `
+                    <h2>Juego terminado. Tu puntuación final es: ${score}</h2>
+                    <h3>Tu avatar: ${selectedAvatar}</h3>
+                    <img id="final-avatar" src="${avatars[selectedAvatar]}" alt="${selectedAvatar}">
+                    <br>
+                    <button onclick="restartGame()">Reiniciar Juego</button>
+                    <button onclick="goToStart()">Ir al Inicio</button>
+                `;
+            }
+        };
+
+        function restartGame() {
+    window.location.href = 'file:///C:/Users/felipe/Desktop/Producto%20monografia/Juego2.html'; 
+}
+        
+
+        function goToStart() {
+            window.location.href = 'file:///C:/Users/felipe/Desktop/Producto%20monografia/2.html';
+        }
+
+        startGame();
+    </script>
+</body>
+</html>

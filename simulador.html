@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciberseguridad: Phishing</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 20px;
+            background-image: url('https://media.giphy.com/media/smzfl3E7a4iHK/giphy.gif?cid=790b7611nb5pu3ay262iju7f3tfahmq9o68k4rodhww5stao&ep=v1_gifs_search&rid=giphy.gif&ct=g');
+            background-size: cover;
+            background-repeat: no-repeat;
+            color: #ffffff;
+        }
+        h1, h2 {
+            color: #ffffff;
+        }
+        ul {
+            margin-top: 10px;
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        .quiz {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            margin-top: 20px;
+        }
+        .info-box {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00cc00;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .result {
+            display: none;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #ff0000;
+        }
+        button {
+            background-color: #00cc00;
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #33cc33;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #fffffffa;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>¿Qué es el Phishing?</h1>
+    <div class="info-box">
+        <p>
+            El phishing es un tipo de ataque cibernético en el que los atacantes intentan engañar a los usuarios para que revelen información personal, como contraseñas y números de tarjetas de crédito, haciéndose pasar por entidades de confianza.
+        </p>
+    </div>
+
+    <h2>Cómo Protegerse</h2>
+    <div class="info-box">
+        <ul>
+            <li>Desconfía de correos electrónicos o mensajes inesperados que soliciten información personal.</li>
+            <li>Verifica la dirección del remitente y el enlace antes de hacer clic.</li>
+            <li>Utiliza autenticación de dos factores siempre que sea posible.</li>
+            <li>Mantén tu software y sistema operativo actualizados.</li>
+            <li>Informa a tus contactos si sospechas que has sido víctima de un ataque.</li>
+        </ul>
+    </div>
+
+    <div class="quiz">
+        <h2>¿Puedes identificar un correo de phishing?</h2>
+        <p id="email-example">Cargando...</p>
+        <button onclick="checkAnswer('phishing')">Phishing</button>
+        <button onclick="checkAnswer('no-phishing')">No Phishing</button>
+        <div class="result" id="result"></div>
+        <button id="next-btn" onclick="nextEmail()" style="display:none;">Siguiente</button>
+    </div>
+
+    <button onclick="window.location.href='file:///C:/Users/felipe/Desktop/Producto%20monografia/2.html'">Ir a Inicio</button>
+
+    <script>
+        const emails = [
+            { text: "Atención: su cuenta ha sido bloqueada. Haga clic aquí para desbloquearla.", phishing: true },
+            { text: "Su suscripción a nuestro boletín ha sido confirmada.", phishing: false },
+            { text: "¡Felicidades! Ha ganado un iPhone. Reclame su premio aquí.", phishing: true },
+            { text: "Recordatorio: su cita está programada para mañana.", phishing: false },
+            { text: "Su cuenta de Netflix ha sido comprometida. Verifique su información.", phishing: true },
+            { text: "Actualización importante de su cuenta. Haga clic para más detalles.", phishing: true },
+            { text: "Su factura de servicios está lista. Pague ahora.", phishing: false },
+            { text: "Urgente: su cuenta de banco necesita verificación. Proporcione su información aquí.", phishing: true },
+            { text: "Su pedido ha sido enviado. Haga clic para rastrear.", phishing: false },
+            { text: "¡Gran oferta! Compre ahora y obtenga un 50% de descuento.", phishing: true },
+            { text: "Notificación de actualización de contraseña. Si no fue usted, contáctenos.", phishing: false },
+            { text: "Alerta de seguridad: actividad sospechosa en su cuenta. Haga clic aquí para verificar.", phishing: true },
+            { text: "Gracias por su pago. Su recibo está adjunto.", phishing: false },
+            { text: "Importante: su cuenta de Google requiere verificación.", phishing: true },
+            { text: "Recibió una nueva recomendación de amigos. Haga clic para ver.", phishing: false },
+            { text: "Su cuenta de eBay ha sido restringida. Verifique su información aquí.", phishing: true },
+            { text: "Nueva oferta de empleo. Envíe su CV para más detalles.", phishing: false },
+            { text: "Atención: actualización de su información de pago necesaria.", phishing: true },
+            { text: "Su acceso a la cuenta ha sido renovado. Inicie sesión para continuar.", phishing: false },
+            { text: "¡No se lo pierda! Oferta especial válida solo por 24 horas.", phishing: true },
+            { text: "Su cuenta de Amazon Prime ha sido actualizada.", phishing: false },
+            { text: "Notificación: ha recibido un pago de $500. Haga clic aquí para aceptarlo.", phishing: true },
+            { text: "Hola, solo quería saber si todo está bien. ¡Hablamos pronto!", phishing: false },
+            { text: "Su cuenta de PayPal ha sido suspendida temporalmente. Verifique su información aquí.", phishing: true },
+            { text: "Recordatorio: su membresía de gimnasio se renueva el próximo mes.", phishing: false },
+            { text: "Atención: ha sido elegido para una oferta exclusiva de tarjeta de crédito.", phishing: true },
+            { text: "Su antivirus ha sido actualizado correctamente.", phishing: false },
+            { text: "Urgente: confirme su información para evitar que su cuenta sea eliminada.", phishing: true },
+            { text: "Felicidades, ha ganado un viaje a las Bahamas. Haga clic para reclamar.", phishing: true },
+            { text: "Notificación: su paquete ha sido enviado. Haga clic para rastrear.", phishing: false },
+            { text: "Alerta: su perfil de redes sociales ha sido hackeado. Cambie su contraseña inmediatamente.", phishing: true },
+        ];
+
+        function loadEmail() {
+            const randomIndex = Math.floor(Math.random() * emails.length);
+            document.getElementById('email-example').innerText = emails[randomIndex].text;
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            return randomIndex;
+        }
+
+        let currentEmailIndex = loadEmail();
+
+        function checkAnswer(answer) {
+            const resultDiv = document.getElementById('result');
+            const isPhishing = emails[currentEmailIndex].phishing;
+
+            if ((answer === 'phishing' && isPhishing) || (answer === 'no-phishing' && !isPhishing)) {
+                resultDiv.innerHTML = '¡Correcto! Has identificado correctamente el correo.';
+            } else {
+                resultDiv.innerHTML = '¡Incorrecto! Este correo es ' + (isPhishing ? 'phishing.' : 'legítimo.');
+            }
+            resultDiv.style.display = 'block';
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextEmail() {
+            currentEmailIndex = loadEmail();
+        }
+
+        loadEmail();
+    </script>
+
+    <footer>
+        <p>&copy; 2024 piña records.</p>
+        <p>Version 1.1</p>
+    </footer>
+</body>
+</html>
